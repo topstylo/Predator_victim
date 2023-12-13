@@ -122,18 +122,19 @@ class Cell:
             self.velocity[1] *= -1
 
 
-class Predator(Cell:)
+class Predator(Cell):
+
     """ The class for predator cells. Is a child of Cell class
+    The class for predator cells. Is a child of Cell class
     Parameters:
-            satiety_decrement  : float : It is taken from satiety every moment of time; how fast satiety gets lower
-            max_velocity : float: A limit of the velocity the cell
-            reproductive_age  : list :  Limit of the cell's age where the cell can multiply
-            color : list : A color of the cell
+        satiety_decrement  : float : It is taken from satiety every moment of time; how fast satiety gets lower
+        max_velocity : float: A limit of the velocity the cell
+        reproductive_age  : list :  Limit of the cell's age where the cell can multiply
+        color : list : A color of the cell
     Methods:
         init : Initializes object
         calc_forces : Calculates the forces that applied to the cells
         multiply : Creating new cells
-
     """
 
     def __init__(self, age_step : float, multiply_skill : float, satiety_decrement : float)::
