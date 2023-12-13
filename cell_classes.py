@@ -123,7 +123,7 @@ class Cell:
 
 
 class Predator(Cell:)
-     """The class for predator cells. Is a child of Cell class
+    """The class for predator cells. Is a child of Cell class
     Parameters:
             satiety_decrement  : float : It is taken from satiety every moment of time; how fast satiety gets lower
             max_velocity : float: A limit of the velocity the cell
