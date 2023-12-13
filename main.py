@@ -3,9 +3,24 @@ time = 0
 time_step = 1
 
 
+from visual import *
+
+
+
+def user_parameters():
+    pass
+
+
+def buttons(user_parameter_set):
+    pass
+
+
+def restart_the_game(user_parameter_set):
+    pass
+
 
 def main():
-    """Main function of program. It creates a screen where cells lives and makes an actions with them"""
+    """Main function of program. It creates a screen where cells lives and makes actions with them"""
 
     global time
 
