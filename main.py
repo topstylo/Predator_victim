@@ -1,4 +1,4 @@
-cell_list, meal_list = [], []
+cell_list, food_list = [], []
 time = 0
 time_step = 1
 
@@ -30,7 +30,7 @@ def main():
     # Buttons
     button_list = buttons(user_parameter_set)  # Creates a button list
 
-    restart_the_game(user_parameter_set)  # Creates the cells and the meal lists
+    restart_the_game(user_parameter_set)  # Creates the cells and the food lists
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     screen.set_alpha(None)
@@ -48,8 +48,8 @@ def main():
 
 
 
-        # Draws meal on the screen
-        draw_meal(meal_list, screen)
+        # Draws food on the screen
+        draw_food(food_list, screen)
         # Draws cells on the screen
         draw_cells(cell_list, screen)
 

@@ -62,11 +62,17 @@ def calc_force(vector):
     return force
 
 
+def probability_to_multiply():
+    """Function returns float from (0, 1) """
+    return random.uniform(0, 1)
+
+
 class Cell:
     """The common class for all cells
     Parameters:
             multiply_skill : float : A skill to multiply
             age : float : An age of a cell
+            __color : list : __color of the cell
             size  : int : A size of the cell
             position  : numpy array : Cords of a center of the cell
             velocity : numpy array : velocity of the cell
@@ -75,8 +81,8 @@ class Cell:
             age_step  : float : It is added to the age every moment of time; how fast a cell gets older
             age_of_last_multiplication  : float or int : The last time when the cell multiplied
             reproductive_delay  : float : How long the cell need to wait before multiply
-            border_color  : list : A color of the borderline of the cell
-            border_thickness  : int : A variable that responsible for a thickness of the border; when cell gets
+            __border___color  : list : A __color of the borderline of the cell
+            __border_thickness  : int : A variable that responsible for a thickness of the border; when cell gets
             older borderline gets thicker
     Methods:
         init : Initializes class
@@ -93,14 +99,15 @@ class Cell:
         self.velocity = np.array([1.0, 1.0])
         # Genetic code
         self.satiety = 1.0  # сытость
+        self.__color = WHITE
         self.age_step = age_step
         self.age_of_last_multiplication = 0
         self.reproductive_delay = 0.5
-        self.border_color = WHITE
-        self.border_thickness = 1
+        self.__border___color = WHITE
+        self.__border_thickness = 1
 
     def update(self):
-        """ Function updates position of cell, cell can not run outside the screen """
+        """ Function updates states of the cell, cell can not run outside the screen """
 
         # Updates position :
         self.position[0] += self.velocity[0]
@@ -120,6 +127,17 @@ class Cell:
         elif self.position[1] <= 0:
             self.position[1] = abs(self.position[1])
             self.velocity[1] *= -1
+        
+        cell.age +=cell.age_step
+        cell.satiety -= cell.satiety_decrement
+        cell.__border___color = (102 + cell.satiety * 153, 102 + cell.satiety * 153,
+                             102 + cell.satiety * 153)
+        if cell.age < cell.reproductive_age[0]:
+            cell.__border_thickness = -1
+        elif cell.reproductive_age[0] <= cell.age <= cell.reproductive_age[1]:
+            cell.__border_thickness = 1
+        elif cell.age > cell.reproductive_age[1]:
+            cell.__border_thickness = 2
 
 
 class Predator(Cell):
@@ -130,16 +148,16 @@ class Predator(Cell):
         satiety_decrement  : float : It is taken from satiety every moment of time; how fast satiety gets lower
         max_velocity : float: A limit of the velocity the cell
         reproductive_age  : list :  Limit of the cell's age where the cell can multiply
-        color : list : A color of the cell
+        __color : list : A __color of the cell
     Methods:
-        init : Initializes object
+        __init__ : Initializes object
         calc_forces : Calculates the forces that applied to the cells
         multiply : Creating new cells
     """
 
     def __init__(self, age_step : float, multiply_skill : float, satiety_decrement : float)::
         super().__init__(age_step, multiply_skill, satiety_decrement):
-        self.color = RED
+        self.__color = RED
         self.max_velocity = 3 + (2 * random.random() - 1) ** 3
         self.reproductive_age = [5, 50]
         self.reproductive_delay = 3
@@ -182,32 +200,49 @@ class Predator(Cell):
                     acceleration -= calc_force(np.array(vector_to_cell))        
         self.velocity += acceleration
 
-    def multiply(self, list_cells, parameters):
+    def multiply(self, list_victims, list_predators, parameters):
         """:arg:     list_cells - list of cells
 
         Function returns child_predator if it could spawn or 0 if it could not."""
+        list_cells = list_victims+list_predators
+        p = probability_to_multiply()  # The chance of a cell to multiply
+        if (p > cell.multiply_skill
+                # Cells have to be if reproductive age to multiply :
+                and cell.reproductive_age[0] <= cell.age <= cell.reproductive_age[1]
+                # Cells could not multiply each moment of time :
+                and cell.age - cell.age_of_last_multiplication > cell.reproductive_waiting
+                # Cells have to have a lot of satiety to multiply :
+                and cell.satiety >= 0.5):
+            spawn = True
+            phi = random.uniform(0, 2 * np.pi)  # Random phi
+            x = self.position[0] + 2 * self.size * np.cos(phi)  # x cor of center new cell
+            y = self.position[1] + 2 * self.size * np.sin(phi)  # y cor of center new cell
 
-        global spawn
-        spawn = True
-        child_predator = Predator(parameters[2].value, parameters[3].value, parameters[4].value)  # Creates a new predator
-
-        phi = random.uniform(0, 2 * np.pi)  # Random phi
-        x = self.position[0] + 2 * self.size * np.cos(phi)  # x cor of center new cell
-        y = self.position[1] + 2 * self.size * np.sin(phi)  # y cor of center new cell
-
-        for cell in list_cells:  # Do not spawn near each other
-            vector = cell.position - np.array([x, y])
-            module_vec = vec_module(vector)
-            if module_vec <= 2 * self.size:
-                spawn = False
-                break
-        if spawn:
-            child_predator.position = np.array([x, y])
-            self.satiety, child_predator.satiety = self.satiety / 2, self.satiety / 2
-            return child_predator
+            for cell in list_cells:  # Do not spawn near each other
+                vector = cell.position - np.array([x, y])
+                module_vec = vec_module(vector)
+                if module_vec <= 2 * self.size:
+                    spawn = False
+                    break
+            if spawn:
+                child_predator = Predator(parameters[2].value, parameters[3].value, parameters[4].value)  # Creates a new predator
+                child_predator.position = np.array([x, y])
+                self.satiety, child_predator.satiety = self.satiety / 2, self.satiety / 2
+                list_predators.append(child_predator) # adding the born cell to the list
+                return child_predator
+            else:
+                return 0
         else:
             return 0
 
+def update(self):
+    super().update()
+    if cell.predator:
+        cell.__color = (150 + cell.satiety * 102, 102 - cell.satiety * 102,
+                      102 - cell.satiety * 102)
+    else:
+        cell.__color = (102 - cell.satiety * 102, 150 + cell.satiety * 102,
+                      102 - cell.satiety * 102)
 
 class Victim(Cell):
     """The class for victim cells. Is a child of Cell class
@@ -215,7 +250,7 @@ class Victim(Cell):
             satiety_decrement  : float : It is taken from satiety every moment of time; how fast satiety gets lower
             max_velocity : float: A limit of the velocity the cell
             reproductive_age  : list :  Limit of the cell's age where the cell can multiply
-            color : list : A color of the cell
+            __color : list : A __color of the cell
             richness  : float : How much satiety a predator cell will get from eating a cell
             view_radius : float or int : How much a victim cell can see to find a predator
     Methods:
@@ -231,8 +266,7 @@ class Victim(Cell):
         self.max_velocity = 3 + (3 * random.random() - 1.5) ** 3
         self.reproductive_age = [5, 80]
         self.reproductive_delay = 0.5
-        self.color = GREEN
-        self.predator = False
+        self.__color = GREEN
         self.reachness = 0.5 
         self.view_radius = 200
 
@@ -289,33 +323,43 @@ class Victim(Cell):
 
         self.velocity += acceleration
 
-    def multiply(self, list_cells, parameters):
-        """:arg:     list_cells - list of cells
+    def multiply(self, list_victims,list_predatoprs, parameters):
+        """:arg:     list_victims - list of victims
+                     list_predators - list of predators
 
         Function returns child_victim if it could spawn or 0 if it could not."""
+        p = probability_to multiply()
+        list_cells = list_victims + list_predators
+        if (p > cell.multiply_skill
+                # Cells have to be in reproductive age to multiply :
+                and cell.reproductive_age[0] <= cell.age <= cell.reproductive_age[1]
+                # Cells could not multiply each moment of time :
+                and cell.age - cell.age_of_last_multiplication > cell.reproductive_waiting
+                # Cells have to have a lot of satiety to multiply :
+                and cell.satiety >= 0.5):
+            spawn = True
+            child_victim = Victim(parameters[2].value, parameters[3].value, parameters[4].value)  # Creates a new predator
 
-        global spawn
-        spawn = True
-        child_victim = Victim(parameters[2].value, parameters[3].value, parameters[4].value)  # Creates a new predator
+            phi = random.uniform(0, 2 * np.pi)  # Random phi
+            x = self.position[0] + 2 * self.size * np.cos(phi)  # x cor of center new cell
+            y = self.position[1] + 2 * self.size * np.sin(phi)  # y cor of center new cell
 
-        phi = random.uniform(0, 2 * np.pi)  # Random phi
-        x = self.position[0] + 2 * self.size * np.cos(phi)  # x cor of center new cell
-        y = self.position[1] + 2 * self.size * np.sin(phi)  # y cor of center new cell
-
-        for cell in list_cells:  # Do not spawn near each other
-            vector = cell.position - np.array([x, y])
-            module_vec = vec_module(vector)
-            if module_vec <= 2 * self.size:
-                spawn = False
-                break
-        if spawn:
-            child_victim.position = np.array([x, y])
-            self.satiety, child_victim.satiety = self.satiety / 2, self.satiety / 2
-            return child_victim
+            for cell in list_cells:  # Do not spawn near each other
+                vector = cell.position - np.array([x, y])
+                module_vec = vec_module(vector)
+                if module_vec <= 2 * self.size:
+                    spawn = False
+                    break
+            if spawn:
+                child_victim = Victim(parameters[2].value, parameters[3].value, parameters[4].value)  # Creates a new victim
+                child_victim.position = np.array([x, y])
+                self.satiety, child_victim.satiety = self.satiety / 2, self.satiety / 2
+                list_victims.append(child_victim) # adding the born cell to the list
+                return child_victim
+            else:
+                return 0
         else:
             return 0
-
-
 
 class Food:
     """The common class for food
