@@ -1,4 +1,4 @@
-from cells_classes import *
+from cell_classes import *
 import numpy as np
 
 
@@ -17,21 +17,24 @@ def kill_the_cell(list_victims, list_predators, cell, time):
         list_predators.remove(cell)
 
 
-def multiply(list_victims : list,list_predators : list, time : float, parameters):
+def multiply(list_victims : list, list_predators : list, time : float, parameters):
     """:arg:    list_cells - type : list. Contains all elements with type 'Cell'
                 time -  type : float. How much time passed since the beginning of the simulation
 
     Function adds new cell (cells multiply) and kills cell if it is too old or too hungry
 
     """
+    
+    list_cells = list_victims+list_predators # list of all cells
     for cell in list_cells:
         if cell.age >= 100 or cell.satiety <= 0:  # A cell dies if it is too old or too hungry
             kill_the_cell(list_victims,list_predators, cell, time)
-        cell.multiply(list_vectims,list_predators, parameters)  # 
+        cell.multiply(list_victims,list_predators, parameters)  # 
 
 
-def update(list_victims, list_predators, food_list, time):
-    """:arg:    list_cells - type : list. Contains all elements with type 'Cell'
+def update(list_victims : list, list_predators : list, food_list : list, time : float):
+    """:arg:    list_victims - type : list. Contains all elements with type 'Victim'
+                list_predators - type : list. Contains all elements with type 'Predator'
                 food_list - type : list. Contains all elements with type 'Food'
                 time - type : float. The moment of time when update is called
 
@@ -42,20 +45,20 @@ def update(list_victims, list_predators, food_list, time):
     """
     list_cells = list_victims+list_predators # list af all cells
     for cell in list_cells:
-        cell.calc_forces(food_list, list_cells)  # Calculates forces
+        cell.calc_forces(food_list, list_victims, list_predators)  # Calculates forces
         cell.update()  # Updates a position of the cells
         # Is a peaceful cell was eaten by a predator :
-    for cell in list_predators:
+    for  predator in list_predators:
         if len(list_victims) != 0:
             for victim in list_victims:
                 # They are have to be close to each other :
-                if vec_module(calc_vector(cell, victim)) <= victim.size:
+                if vec_module(calc_vector(predator, victim)) <= victim.size:
                     # Kills a cell :
                     kill_the_cell(list_victims,list_predators, victim, time)
                     # Adds satiety :
-                    cell.satiety += victim.richness
+                    predator.satiety += victim.richness
                     # Satiety have to be from 0 to 1 :
-                    cell.satiety = min(cell.satiety, 1)
+                    predator.satiety = min(cell.satiety, 1)
 
 
     # It checks was food eaten by peaceful cell or not:

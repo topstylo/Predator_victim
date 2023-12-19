@@ -172,3 +172,22 @@ def draw_user_panel(surf, button_list):
 
     for button in button_list:
         button.draw(surf)
+
+def draw_cells(list_cells, surface):
+    """ Function draws a cells on the surface.
+
+        :param surface: pygame.Surface : surface for drawing
+        :param list_cells : list(Cell) : list of cells
+    """
+    for cell in list_cells:
+        cell.draw(surface)
+
+
+def draw_food(food_list, surface):
+    """ Function draws a food object on the surface.
+
+        :param surface : pygame.Surface : surface where cells will be drawn
+        :param food_list : list : list of food objects
+        """
+    for food in food_list:
+        food.draw(surface)
