@@ -109,7 +109,7 @@ def buttons(parameters):
         parameter=parameters[1]
     )
 
-    # Changes a age step
+    # Changes an age step
     point = button_max_food.get_corner("top-right")
     point = [point[0] + offset, point[1]]
     button_age_step = Button(
@@ -191,14 +191,14 @@ def buttons(parameters):
         parameter=parameters[3]
     )
 
-    # Changes a satiety
+    # Changes a satiety decrement
     point = button_multiply_skill.get_corner("top-right")
     point = [point[0] + offset, point[1]]
     button_satiety = Button(
         point,
         [2 * button_length, button_height_small],
         function='pass',
-        text='Satiety step',
+        text='Satiety decrement',
         parameter=parameters[4]
     )
 
