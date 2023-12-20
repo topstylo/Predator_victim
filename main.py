@@ -1,6 +1,6 @@
-from actions import *
-from cell_classes import *
-from vis_module import*
+from modules.actions import *
+from modules.cell_classes import *
+from modules.vis_module import*
 
 list_victims, list_predators, food_list = [], [], []
 time = 0
@@ -44,13 +44,10 @@ def add_predator(position, predators, parameters):
     else:
         # Creates cell
         new_predator = Predator(parameters[2].value, parameters[3].value, 0.005)
-        # Generates random cell position
+        # Generates random cell age and satiety
         new_predator.position = position
-        new_predator.age = random.random() * 20
-        new_predator.max_speed = 3 + (2 * random.random() - 1) ** 3
-        new_predator.satiety = random.random()
-        new_predator.reproductive_age = [20, 50]
-        new_predator.reproductive_waiting = 3
+        new_predator.age = random.random() * 2
+        new_predator.satiety = random.random() 
         predators.append(new_predator)
 
 def buttons(parameters):
@@ -295,7 +292,7 @@ def restart_the_game(parameters):
     """
     global list_victims, list_predators, food_list, time, time_step
 
-#    clean_file(file_name='data.txt')
+    clean_file(file_name='data.txt')
     time = 0
     time_step = 1
     list_victims, list_predators = [],[]

@@ -178,8 +178,9 @@ class Predator(Cell):
     def __init__(self, age_step : float, multiply_skill : float, satiety_decrement : float):
         super().__init__(age_step, multiply_skill, satiety_decrement)
         self._Cell__color = RED
-        self.max_speed = 3 + (2 * random.random() - 1) ** 3
+        self.max_speed = 3 + ( 2 * random.random() - 1) ** 3
         self.reproductive_age = [5, 50]
+        self.reproductive_delay = 3
 
 
     def calc_forces(self, list_food, list_victims, list_predators):
@@ -291,7 +292,7 @@ class Victim(Cell):
         super().__init__(age_step, multiply_skill, satiety_decrement)
         self.max_speed = 3 + (3 * random.random() - 1.5) ** 3
         self.reproductive_age = [5, 80]
-        self.reproductive_delay = 0.5
+        self.reproductive_delay = 0.2
         self._Cell__color = GREEN
         self.richness = 0.5 
         self.view_radius = 200

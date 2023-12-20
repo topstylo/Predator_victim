@@ -59,7 +59,7 @@ def update(list_victims : list, list_predators : list, food_list : list, time : 
                     # Adds satiety :
                     predator.satiety += victim.richness
                     # Satiety have to be from 0 to 1 :
-                    predator.satiety = min(cell.satiety, 1)
+                    predator.satiety = min(predator.satiety, 1)
 
 
     # It checks was food eaten by peaceful cell or not:
