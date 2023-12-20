@@ -80,7 +80,6 @@ class UserPanelParameter:
         if self.value < self.min_value:
             self.value = self.min_value
 
-
 class Button:
     """ Button class : class of the button for user panel on the screen.
 
@@ -149,14 +148,12 @@ class Button:
                           self.position[1] + self.size[1]]
         return coordinate
 
-
 def clean_screen(surface):
     """ Function draw only background color on the surface
 
         :param surface : pygame.Surface : surface for cleaning
     """
     surface.fill(DARK_GREY)
-
 
 def draw_user_panel(surf, button_list):
     """ Function draws user panel on the screen with all buttons.
@@ -182,7 +179,6 @@ def draw_cells(list_cells, surface):
     for cell in list_cells:
         cell.draw(surface)
 
-
 def draw_food(food_list, surface):
     """ Function draws a food object on the surface.
 
@@ -191,3 +187,148 @@ def draw_food(food_list, surface):
         """
     for food in food_list:
         food.draw(surface)
+
+def interpolate_color(color_1, color_2, coefficient):
+    """ Function interpolate the color between two ones with given ratio.
+
+        :param color_1 : tuple(int, int, int) : first color
+        :param color_2 : tuple(int, int, int) : second color
+        :param coefficient : float : proportion (part of first color)
+    """
+    color_1 = np.array(color_1)
+    color_2 = np.array(color_2)
+    color = color_1 * coefficient + color_2 * (1 - coefficient)
+    color = [int(color_part) for color_part in color]
+
+    return tuple(color)
+
+def draw_graph(surface, starting_point, sizes, x_data, y_data,
+               axis_comment, graph_name, x_scale=500):
+    """ Function draws graph on the screen.
+
+        :param surface : pygame.Surface : surface where graph will be drawn
+        :param starting_point : list : the starting point of graph
+        :param sizes : list : size of graph
+        :param x_data : list : data on x axis
+        :param y_data : list : data on y axis
+        :param axis_comment : list : each element is string
+        :param graph_name : string : name of graph
+        :param x_scale : int : maximum value (x_max - x_min)
+    """
+    # Parameters
+    offset = 50
+    tick_length = 10
+    number_of_ticks = [20, 10]
+
+    x_max = max(x_data) if max(x_data) > x_scale else x_scale
+    x_min = x_max - x_scale
+    if x_max > 1000:
+        number_of_ticks[0] = 10
+
+    min_index_on_screen = 0
+    for i in range(len(x_data)):
+        if x_data[i] <= x_min:
+            min_index_on_screen = i
+    x_data = x_data[min_index_on_screen:]
+    for i in range(len(y_data)):
+        y_data[i] = y_data[i][min_index_on_screen:]
+
+    y_max = 0
+    for i in range(len(y_data)):
+        y_max = (max(y_max, max(y_data[i])) // 10 + 1) * 10
+    y_min = 0
+
+    image_axis = pygame.Surface((sizes[0], sizes[1]), pygame.SRCALPHA)
+    image_data = pygame.Surface((sizes[0] - 2 * offset, sizes[1] - 2 * offset))
+    image_data.set_colorkey(BLACK)
+
+    # Axes X and Y accordingly
+    pygame.draw.line(image_axis, AXES_COLOR,
+                     (offset, sizes[1] - offset),
+                     (sizes[0] - offset, sizes[1] - offset))
+    pygame.draw.line(image_axis, AXES_COLOR,
+                     (offset, offset),
+                     (offset, sizes[1] - offset))
+
+    # Ticks on axes X and Y accordingly
+    font_surface = pygame.font.SysFont(FONT, FONT_SIZE_MIN)
+    for i in range(number_of_ticks[0] + 1):
+        # Tick position on X axis
+        x = offset + (sizes[0] - 2 * offset) * i / number_of_ticks[0]
+        y = sizes[1] - offset
+        # Tick on X axis
+        pygame.draw.line(image_axis, AXES_COLOR, (x, y), (x, y + tick_length))
+        # Number on X axis
+        text = str(int(x_min + x_scale * i / number_of_ticks[0]))
+        text_surface = font_surface.render(text, True, FONT_COLOR)
+        text_rect = text_surface.get_rect(
+            center=(starting_point[0] + x,
+                    starting_point[1] + y + 2 * tick_length))
+        surface.blit(text_surface, text_rect)
+
+    # Name of X axis
+    text_surface = font_surface.render(axis_comment[0], True, FONT_COLOR)
+    text_rect = text_surface.get_rect(
+        center=(starting_point[0] + sizes[0] // 2,
+                starting_point[1] + sizes[1] - offset + 3.5 * tick_length)
+    )
+    surface.blit(text_surface, text_rect)
+
+    for i in range(number_of_ticks[1] + 1):
+        # Tick position on Y axis
+        x = offset
+        y = offset + (sizes[1] - 2 * offset) * i / number_of_ticks[1]
+        # Tick on Y axis
+        pygame.draw.line(image_axis, AXES_COLOR, (x, y), (x - tick_length, y))
+        # Number on Y axis
+        text = str(int(y_max - (y_max - y_min) * i / number_of_ticks[1]))
+        text_surface = font_surface.render(text, True, FONT_COLOR)
+        text_rect = text_surface.get_rect(
+            center=(starting_point[0] + x - 2 * tick_length,
+                    starting_point[1] + y)
+        )
+        surface.blit(text_surface, text_rect)
+
+    # Name of Y axis
+    text_surface = font_surface.render(axis_comment[1], True, FONT_COLOR)
+    text_surface = pygame.transform.rotate(text_surface, 90)
+    text_rect = text_surface.get_rect(
+        center=(starting_point[0] + offset - 3.5 * tick_length,
+                starting_point[1] + sizes[1] // 2)
+    )
+    surface.blit(text_surface, text_rect)
+
+    # Graph name
+    font_surface = pygame.font.SysFont(FONT, FONT_SIZE_MAX)
+    text_surface = font_surface.render(graph_name, True, FONT_COLOR)
+    text_rect = text_surface.get_rect(
+        center=(starting_point[0] + sizes[0] // 2,
+                starting_point[1] + offset - 2 * tick_length)
+    )
+    surface.blit(text_surface, text_rect)
+
+    # Draw graph lines
+    color_set = [GREEN, RED]
+    for i in range(len(y_data)):
+        line = []
+        basic_color = color_set[i]
+        for j in range(len(x_data)):
+            line.append(((sizes[0] - 2 * offset) * (x_data[j] - x_min) / x_scale,
+                         (sizes[1] - 2 * offset) * (1 - (y_data[i][j] - y_min) / y_max))
+                        )
+        if len(line) > 1:
+            color_steps = min(len(line) - 1, 10)
+            for j in range(color_steps):
+                start = int(np.floor(len(line) * j / color_steps))
+                end = int(np.ceil(len(line) * (j + 1) / color_steps))
+                line_segment = line[start:end + 1]
+                color = interpolate_color(basic_color, DARK_GREY,
+                                          0.2 + (j + 1) * 0.8 / color_steps)
+                pygame.draw.lines(image_data, color, False, line_segment, 1)
+            pygame.draw.circle(image_data, basic_color, line[-1], 3)
+
+    # Draw the surfaces on the screen
+    surface.blit(image_axis,
+                 (starting_point[0], starting_point[1]))
+    surface.blit(image_data,
+                 (starting_point[0] + offset, starting_point[1] + offset))

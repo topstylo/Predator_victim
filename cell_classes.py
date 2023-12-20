@@ -199,6 +199,14 @@ class Predator(Cell):
         if len(closest_victims) == 0:
             closest_victims = [cell for cell in list_victims if vec_module(calc_vector(self, cell)) <= 600]
 
+        closest_food = [food for food in list_food
+                        if vec_module(calc_vector(self, food)) <= 100]
+        if len(closest_food) == 0:
+            closest_food = [food for food in list_food
+                            if vec_module(calc_vector(self, food)) <= 300]
+        if len(closest_food) == 0:
+            closest_food = [food for food in list_food
+                            if vec_module(calc_vector(self, food)) <= 600]
         # Calculating the force of entire engine
         # Gets direction of the vector to a food
 
