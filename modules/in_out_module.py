@@ -1,7 +1,5 @@
-"""This module will contain functions for reading from file and
-for writing to file"""
-from shutil import copyfile, move
-import datetime
+"""This module will contain functions for deleting file"""
+import os
 
 
 def write_data(list_victim, list_predator, time):
@@ -9,8 +7,10 @@ def write_data(list_victim, list_predator, time):
 
     Parameters
     ----------
-    list_cells : list
-        list of cells
+    list_predator : list
+        list of predators
+    list_victim : list
+        list of victims
     time : int
         current time = step of modelling
 
@@ -33,12 +33,12 @@ def write_data(list_victim, list_predator, time):
     victim_average_age = (sum(list_victim_age) / number_of_victims
                           if number_of_victims > 0 else 0)
     predator_average_age = (sum(list_predator_age) / number_of_predators
-                          if number_of_predators > 0 else 0)
+                            if number_of_predators > 0 else 0)
 
     victim_average_max_speed = (sum(list_victim_max_speed) / number_of_victims
-                              if number_of_victims > 0 else 0)
+                                if number_of_victims > 0 else 0)
     predator_average_max_speed = (sum(list_predator_max_speed) / number_of_predators
-                                if number_of_predators > 0 else 0)
+                                  if number_of_predators > 0 else 0)
 
     victim_average_satiety = (sum(list_victim_satiety) / number_of_victims
                               if number_of_victims > 0 else 0)
@@ -116,25 +116,6 @@ def read_data(file_name):
             )
 
 
-def save_file(file_name, folder_name):
-    """ Function copies 'data.txt' file to 'data_yyyy_mm_dd_hh_mm_ss.txt' file
-
-    Parameters
-    ----------
-    file_name : string
-        name of the data file
-    folder_name : string
-        name of the data file folder
-    Returns
-    ----------
-    """
-    x = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    a = 'data_' + str(x) + '.txt'
-    copyfile(file_name, str(a))
-    move(str(a), folder_name)
-    clean_file(file_name)
-
-
 def clean_file(file_name):
     """ Function cleans 'data.txt' file
 
@@ -147,3 +128,16 @@ def clean_file(file_name):
     """
     file = open(file_name, 'w')
     file.close()
+
+
+def delete_file(file_name):
+    """ Function delete 'data.txt' file
+
+    Parameters
+    ----------
+    file_name : string
+        name of the data file
+    Returns
+    ----------
+    """
+    os.remove(file_name)

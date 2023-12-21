@@ -479,7 +479,7 @@ def main():
         # Updates the screen
         pygame.display.flip()
 
-    save_file(file_name='data.txt', folder_name='database')
+    delete_file(file_name='data.txt')
     pygame.quit()
 
 
