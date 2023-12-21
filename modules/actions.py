@@ -44,7 +44,7 @@ def update(list_victims: list, list_predators: list, food_list: list, time: floa
     adds age of cell and gets lower satiety of cell
 
     """
-    list_cells = list_victims + list_predators  # list af all cells
+    list_cells = list_victims + list_predators  # list of all cells
     for cell in list_cells:
         cell.calc_forces(food_list, list_victims, list_predators)  # Calculates forces
         cell.update()  # Updates a position of the cells

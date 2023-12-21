@@ -1,3 +1,4 @@
+
 import pygame
 import numpy as np
 
@@ -333,7 +334,7 @@ def draw_graph(surface, starting_point, sizes, x_data, y_data,
                 start = int(np.floor(len(line) * j / color_steps))
                 end = int(np.ceil(len(line) * (j + 1) / color_steps))
                 line_segment = line[start:end + 1]
-                color = interpolate_color(basic_color, DARK_GREY,
+                color = interpolate_color(basic_color, BLACK,
                                           0.2 + (j + 1) * 0.8 / color_steps)
                 pygame.draw.lines(image_data, color, False, line_segment, 1)
             pygame.draw.circle(image_data, basic_color, line[-1], 3)

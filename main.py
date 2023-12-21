@@ -1,7 +1,9 @@
+# Importing modules
 from modules.actions import *
 from modules.cell_classes import *
 from modules.vis_module import *
 
+# Global parameters
 list_victims, list_predators, food_list = [], [], []
 time = 0
 time_step = 1

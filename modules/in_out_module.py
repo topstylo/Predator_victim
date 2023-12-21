@@ -3,7 +3,7 @@ import os
 
 
 def write_data(list_victim, list_predator, time):
-    """ Function add line in data.txt file
+    """Function add line in data.txt file
 
     Parameters
     ----------
