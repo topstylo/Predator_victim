@@ -1,10 +1,11 @@
 from modules.actions import *
 from modules.cell_classes import *
-from modules.vis_module import*
+from modules.vis_module import *
 
 list_victims, list_predators, food_list = [], [], []
 time = 0
 time_step = 1
+
 
 def add_victim(position, victims, parameters):
     """ Function adds the new victim cell to the place,
@@ -28,6 +29,7 @@ def add_victim(position, victims, parameters):
         new_victim.satiety = random.random()  # Generates random cell's satiety
         victims.append(new_victim)
 
+
 def add_predator(position, predators, parameters):
     """ Function adds the new predator cell in the place,
         where mouse clicks.
@@ -49,6 +51,7 @@ def add_predator(position, predators, parameters):
         new_predator.age = random.random() * 2
         new_predator.satiety = random.random()
         predators.append(new_predator)
+
 
 def buttons(parameters):
     """Function returns list of buttons"""
@@ -267,6 +270,7 @@ def buttons(parameters):
 
     return button_list
 
+
 def find_button(position, buttons, parameters):
     """ Function activates the button if it is clicked.
 
@@ -284,6 +288,7 @@ def find_button(position, buttons, parameters):
             elif button.function != 'pass':
                 eval(button.function)
 
+
 def restart_the_game(parameters):
     """ Function returns cell_list with 50 different victim cells and 20 predators
         and the food_list.
@@ -295,7 +300,7 @@ def restart_the_game(parameters):
     clean_file(file_name='data.txt')
     time = 0
     time_step = 1
-    list_victims, list_predators = [],[]
+    list_victims, list_predators = [], []
     for i in range(50):
         position = np.array([random.random() * SCREEN_WIDTH, random.random() * SCREEN_HEIGHT])
         add_victim(position, list_victims, parameters)
@@ -303,6 +308,7 @@ def restart_the_game(parameters):
         position = np.array([random.random() * SCREEN_WIDTH, random.random() * SCREEN_HEIGHT])
         add_predator(position, list_predators, parameters)
     food_list = [Food()]
+
 
 def user_parameters():
     """ Function creates user parameter set for user panel. """
@@ -317,6 +323,7 @@ def user_parameters():
             multiply_skill_parameter,
             satiety_step_parameter]
 
+
 def update_labels(labels, parameters):
     """ Function updates text values in buttons that indicates
         the current values of user parameters.
@@ -327,6 +334,7 @@ def update_labels(labels, parameters):
     round_set = [0, 3, 2, 4]
     for i in range(len(labels)):
         labels[i].text = round(parameters[i].value, round_set[i])
+
 
 def update_parameters(parameters, cells):
     """ Function updates values of current parameters after changing.
@@ -339,10 +347,10 @@ def update_parameters(parameters, cells):
         cell.multiply_skill = parameters[3].value
         cell.satiety_step = parameters[4].value
 
+
 def graphs(surf, button_list, time_list, victims_list, predators_list,
            victims_list_mid_age, predators_list_mid_age, victims_list_mid_engine, predators_list_mid_engine,
            victims_list_mid_satiety, predators_list_mid_satiety):
-
     """Function draws graphs on the surf. It depends what type of button is pushed"""
     # For the upper graph
     if len(time_list) > 0:
@@ -428,14 +436,14 @@ def main():
                 if event.button == 1:
                     # Adds a victim cell
                     add_victim(np.array([event.pos[0], event.pos[1] - PANEL_HEIGHT]),
-                                 list_victims,
-                                 user_parameter_set)
+                               list_victims,
+                               user_parameter_set)
                     # Calls a find_button function
                     find_button(event.pos, button_list, user_parameter_set)
                     # Checks if the left button of the mouse is clicked
                     update_labels(labels=button_list[3::4],
                                   parameters=user_parameter_set[1:])
-                    update_parameters(user_parameter_set, list_victims+list_predators)
+                    update_parameters(user_parameter_set, list_victims + list_predators)
                 elif event.button == 3:
                     # Adds a predator
                     add_predator(np.array([event.pos[0], event.pos[1] - PANEL_HEIGHT]),
@@ -446,13 +454,13 @@ def main():
             # Update all data for one time step
             if len(food_list) < user_parameter_set[1].value:
                 food_list.append(Food())
-            multiply(list_victims,list_predators, time, user_parameter_set)
+            multiply(list_victims, list_predators, time, user_parameter_set)
             update(list_victims, list_predators, food_list, time)
             write_data(list_victims, list_predators, time)
         # Draws food on the screen
         draw_food(food_list, screen)
         # Draws cells on the screen
-        draw_cells(list_victims+list_predators, screen)
+        draw_cells(list_victims + list_predators, screen)
 
         # Draws interface objects
         draw_user_panel(screen, button_list)
