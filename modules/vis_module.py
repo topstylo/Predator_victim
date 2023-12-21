@@ -257,7 +257,8 @@ def draw_graph(surface, starting_point, sizes, x_data, y_data,
     pygame.draw.line(image_axis, AXES_COLOR,
                      (offset, offset),
                      (offset, sizes[1] - offset))
-
+                   
+    # Line that divides cell's screen and graph's screen
     pygame.draw.line(surface, WHITE,
                      (SCREEN_WIDTH, PANEL_HEIGHT),
                      (SCREEN_WIDTH, HEIGHT))
