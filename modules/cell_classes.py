@@ -99,7 +99,7 @@ class Cell:
                                   SCREEN_HEIGHT / 2 * random.uniform(0, 1)])
         self.velocity = np.array([1.0, 1.0])
         # Genetic code
-        self.satiety = 1.0  # сытость
+        self.satiety = 1.0  
         self.satiety_decrement = satiety_decrement
         self.__color = WHITE
         self.age_step = age_step
