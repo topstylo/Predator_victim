@@ -47,7 +47,7 @@ def add_predator(position, predators, parameters):
         # Generates random cell age and satiety
         new_predator.position = position
         new_predator.age = random.random() * 2
-        new_predator.satiety = random.random() 
+        new_predator.satiety = random.random()
         predators.append(new_predator)
 
 def buttons(parameters):

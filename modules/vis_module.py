@@ -1,8 +1,6 @@
 import pygame
 import numpy as np
 
-# Interface size
-
 # Instrumental panel size
 PANEL_HEIGHT = 50
 # Simulating area size
@@ -49,6 +47,7 @@ class UserPanelParameter:
             draw : Function draws buttons on the screen
             get_corner : Function calculates the corner coordinates of button
         """
+
     def __init__(self, name, value, min_value, max_value, step_value):
         """ Initializing function.
 
@@ -80,6 +79,7 @@ class UserPanelParameter:
         if self.value < self.min_value:
             self.value = self.min_value
 
+
 class Button:
     """ Button class : class of the button for user panel on the screen.
 
@@ -95,6 +95,7 @@ class Button:
             draw : Draws buttons on the screen
             get_corner : Calculates the corner coordinates of button
     """
+
     def __init__(self, position, size, function, text, parameter):
         """ Initializing function.
 
@@ -148,12 +149,14 @@ class Button:
                           self.position[1] + self.size[1]]
         return coordinate
 
+
 def clean_screen(surface):
     """ Function draw only background color on the surface
 
         :param surface : pygame.Surface : surface for cleaning
     """
-    surface.fill(DARK_GREY)
+    surface.fill(BLACK)
+
 
 def draw_user_panel(surf, button_list):
     """ Function draws user panel on the screen with all buttons.
@@ -170,6 +173,7 @@ def draw_user_panel(surf, button_list):
     for button in button_list:
         button.draw(surf)
 
+
 def draw_cells(list_cells, surface):
     """ Function draws a cells on the surface.
 
@@ -179,6 +183,7 @@ def draw_cells(list_cells, surface):
     for cell in list_cells:
         cell.draw(surface)
 
+
 def draw_food(food_list, surface):
     """ Function draws a food object on the surface.
 
@@ -187,6 +192,7 @@ def draw_food(food_list, surface):
         """
     for food in food_list:
         food.draw(surface)
+
 
 def interpolate_color(color_1, color_2, coefficient):
     """ Function interpolate the color between two ones with given ratio.
@@ -201,6 +207,7 @@ def interpolate_color(color_1, color_2, coefficient):
     color = [int(color_part) for color_part in color]
 
     return tuple(color)
+
 
 def draw_graph(surface, starting_point, sizes, x_data, y_data,
                axis_comment, graph_name, x_scale=500):
@@ -249,6 +256,10 @@ def draw_graph(surface, starting_point, sizes, x_data, y_data,
     pygame.draw.line(image_axis, AXES_COLOR,
                      (offset, offset),
                      (offset, sizes[1] - offset))
+
+    pygame.draw.line(surface, WHITE,
+                     (SCREEN_WIDTH, PANEL_HEIGHT),
+                     (SCREEN_WIDTH, HEIGHT))
 
     # Ticks on axes X and Y accordingly
     font_surface = pygame.font.SysFont(FONT, FONT_SIZE_MIN)

@@ -22,7 +22,7 @@ def calc_vector(object_1, object_2):
     return - object_1.position + object_2.position
 
 
-def calc_area(cell, list_food : list):
+def calc_area(cell, list_food: list):
     """Function returns the vector aimed to the area with the most food
     :arg
         cell - on cell, type : cell
@@ -90,12 +90,12 @@ class Cell:
         draw : Draws the cell on the surface
     """
 
-    def __init__(self, age_step : float, multiply_skill : float, satiety_decrement : float):
+    def __init__(self, age_step: float, multiply_skill: float, satiety_decrement: float):
         # Common property
         self.multiply_skill = multiply_skill
         self.age = 0
         self.size = 5
-        self.position = np.array([SCREEN_WIDTH / 2 * random.uniform(0, 1),
+        self.position = np.array([(SCREEN_WIDTH - 5) / 2 * random.uniform(0, 1),
                                   SCREEN_HEIGHT / 2 * random.uniform(0, 1)])
         self.velocity = np.array([1.0, 1.0])
         # Genetic code
@@ -115,24 +115,24 @@ class Cell:
         self.position[1] += self.velocity[1]
 
         # Cell can not run outside the screen :
-        if self.position[0] >= SCREEN_WIDTH:
-            self.position[0] = SCREEN_WIDTH - (self.position[0] - SCREEN_WIDTH)
+        if self.position[0] >= (SCREEN_WIDTH - 5):
+            self.position[0] = (SCREEN_WIDTH - 5) - (self.position[0] - (SCREEN_WIDTH - 5))
             self.velocity[0] *= -1
-        elif self.position[0] <= 0:
-            self.position[0] = abs(self.position[0])
+        elif self.position[0] <= 5:
+            self.position[0] = abs(self.position[0]) + 5
             self.velocity[0] *= -1
 
-        if self.position[1] >= SCREEN_HEIGHT:
-            self.position[1] = SCREEN_HEIGHT - (self.position[1] - SCREEN_HEIGHT)
+        if self.position[1] >= (SCREEN_HEIGHT - 5):
+            self.position[1] = (SCREEN_HEIGHT - 5) - (self.position[1] - (SCREEN_HEIGHT - 5))
             self.velocity[1] *= -1
-        elif self.position[1] <= 0:
-            self.position[1] = abs(self.position[1])
+        elif self.position[1] <= 5:
+            self.position[1] = abs(self.position[1]) + 5
             self.velocity[1] *= -1
-        
-        self.age +=self.age_step
+
+        self.age += self.age_step
         self.satiety -= self.satiety_decrement
         self.__border___color = (102 + self.satiety * 153, 102 + self.satiety * 153,
-                             102 + self.satiety * 153)
+                                 102 + self.satiety * 153)
         if self.age < self.reproductive_age[0]:
             self.__border_thickness = -1
         elif self.reproductive_age[0] <= self.age <= self.reproductive_age[1]:
@@ -141,9 +141,9 @@ class Cell:
             self.__border_thickness = 2
 
     def draw(self, surface):
-        '''Draws the cell on the surface
+        """Draws the cell on the surface
            arg: surface : pygame.Surface : surface for drawing)
-        '''
+        """
         position = [self.position[0], self.position[1] + PANEL_HEIGHT]
         pygame.draw.circle(
             surface,
@@ -161,7 +161,6 @@ class Cell:
 
 
 class Predator(Cell):
-
     """ The class for predator cells. Is a child of Cell class
     The class for predator cells. Is a child of Cell class
     Parameters:
@@ -175,13 +174,12 @@ class Predator(Cell):
         multiply : Creating new cells
     """
 
-    def __init__(self, age_step : float, multiply_skill : float, satiety_decrement : float):
+    def __init__(self, age_step: float, multiply_skill: float, satiety_decrement: float):
         super().__init__(age_step, multiply_skill, satiety_decrement)
         self._Cell__color = RED
-        self.max_speed = 3 + ( 2 * random.random() - 1) ** 3
+        self.max_speed = 3 + (2 * random.random() - 1) ** 3
         self.reproductive_age = [5, 50]
         self.reproductive_delay = 3
-
 
     def calc_forces(self, list_food, list_victims, list_predators):
         """:arg :   list_food - type : list, each element is Food type
@@ -225,7 +223,7 @@ class Predator(Cell):
             if self != cell:
                 vector_to_cell = calc_vector(self, cell)
                 if vec_module(vector_to_cell) <= self.size:
-                    acceleration -= calc_force(np.array(vector_to_cell))        
+                    acceleration -= calc_force(np.array(vector_to_cell))
         self.velocity += acceleration
 
     def multiply(self, list_victims, list_predators, parameters):
@@ -234,7 +232,7 @@ class Predator(Cell):
 
         Function returns child_predator if it spawned (child_predator added to the list) or 0 if it could not.
         """
-        list_cells = list_victims+list_predators
+        list_cells = list_victims + list_predators
         p = probability_to_multiply()  # The chance of a cell to multiply
         if (p > self.multiply_skill
                 # Cells have to be if reproductive age to multiply :
@@ -255,10 +253,11 @@ class Predator(Cell):
                     spawn = False
                     break
             if spawn:
-                child_predator = Predator(parameters[2].value, parameters[3].value, parameters[4].value)  # Creates a new predator
+                child_predator = Predator(parameters[2].value, parameters[3].value,
+                                          parameters[4].value)  # Creates a new predator
                 child_predator.position = np.array([x, y])
                 self.satiety, child_predator.satiety = self.satiety / 2, self.satiety / 2
-                list_predators.append(child_predator) # adding the born cell to the list
+                list_predators.append(child_predator)  # adding the born cell to the list
                 return child_predator
             else:
                 return 0
@@ -268,7 +267,7 @@ class Predator(Cell):
     def update(self):
         super().update()
         self._Cell__color = (150 + self.satiety * 102, 102 - self.satiety * 102,
-                        102 - self.satiety * 102)
+                             102 - self.satiety * 102)
 
 
 class Victim(Cell):
@@ -287,14 +286,13 @@ class Victim(Cell):
 
     """
 
-
-    def __init__(self, age_step : float, multiply_skill : float, satiety_decrement : float):
+    def __init__(self, age_step: float, multiply_skill: float, satiety_decrement: float):
         super().__init__(age_step, multiply_skill, satiety_decrement)
         self.max_speed = 3 + (3 * random.random() - 1.5) ** 3
         self.reproductive_age = [5, 80]
         self.reproductive_delay = 0.2
         self._Cell__color = GREEN
-        self.richness = 0.5 
+        self.richness = 0.5
         self.view_radius = 200
 
     def calc_forces(self, list_food, list_victims, list_predators):
@@ -304,7 +302,7 @@ class Victim(Cell):
 
         Function calculates forces for a victim cell.
                 It depends on how close the food, how close predator to the cell, viscosity"""
-        
+
         ''' This block searches food first of all in 100 radius, if there are nothing in
                  300 radius and 600 radius. It helps avoid a lot of calculations'''
         closest_food = [food for food in list_food
@@ -317,14 +315,14 @@ class Victim(Cell):
                             if vec_module(calc_vector(self, food)) <= 600]
 
         # It searches the nearest enemies
-        closest_predators = [cell for cell in list_predators 
+        closest_predators = [cell for cell in list_predators
                              if vec_module(calc_vector(self, cell)) <= self.view_radius]
 
         # Calculating the force of entire engine
         # Gets direction of the vector to a food
-        
+
         acceleration_to_food = calc_area(self, closest_food)
-        
+
         # Calculating the force of a viscosity
         viscosity = 0.5
         acceleration = - viscosity * np.array(self.velocity)
@@ -350,7 +348,7 @@ class Victim(Cell):
 
         self.velocity += acceleration
 
-    def multiply(self, list_victims,list_predators, parameters):
+    def multiply(self, list_victims, list_predators, parameters):
         """:arg:     list_victims - list of victims
                      list_predators - list of predators
 
@@ -365,7 +363,7 @@ class Victim(Cell):
                 # Cells have to have a lot of satiety to multiply :
                 and self.satiety >= 0.5):
             spawn = True
-            
+
             phi = random.uniform(0, 2 * np.pi)  # Random phi
             x = self.position[0] + 2 * self.size * np.cos(phi)  # x cor of center new cell
             y = self.position[1] + 2 * self.size * np.sin(phi)  # y cor of center new cell
@@ -377,19 +375,21 @@ class Victim(Cell):
                     spawn = False
                     break
             if spawn:
-                child_victim = Victim(parameters[2].value, parameters[3].value, parameters[4].value)  # Creates a new victim
+                child_victim = Victim(parameters[2].value, parameters[3].value,
+                                      parameters[4].value)  # Creates a new victim
                 child_victim.position = np.array([x, y])
                 self.satiety, child_victim.satiety = self.satiety / 2, self.satiety / 2
-                list_victims.append(child_victim) # adding the born cell to the list
+                list_victims.append(child_victim)  # adding the born cell to the list
                 return child_victim
             else:
                 return 0
         else:
             return 0
+
     def update(self):
         super().update()
         self._Cell__color = (102 - self.satiety * 102, 150 + self.satiety * 102,
-                        102 - self.satiety * 102)
+                             102 - self.satiety * 102)
 
 
 class Food:
@@ -410,7 +410,7 @@ class Food:
         self.size = 3
         self.richness = random.uniform(0, 1)
 
-    def draw(self,surface):
+    def draw(self, surface):
         x_min = self.position[0] - self.size / 2
         y_min = PANEL_HEIGHT + self.position[1] - self.size / 2
         pygame.draw.rect(
